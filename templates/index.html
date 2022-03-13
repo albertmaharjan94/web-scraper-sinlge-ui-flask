@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link type="text/css" rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <!-- /favicons -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- scripts -->
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="w-100 p-5">
+        <div class="row">
+            <div class="col">
+                <h3>Webscraping Interface</h3>
+                <form id="scr-form">
+                    <div class="form-group">
+                      <!-- <label for="title">Title</label> -->
+                      <input type="text" class="form-control" id="title" aria-describedby="titleHelp" placeholder="Enter title">
+                      <small id="titleHelp" class="form-text text-muted">Please insert the title of the content.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <!-- <label for="uriLink">Link</label> -->
+                        <input type="text" class="form-control" id="uriLink" aria-describedby="uriLinkHelp" placeholder="Enter link">
+                        <small id="uriLinkHelp" class="form-text text-muted">Please insert the link for the content.</small>
+                      </div>
+                    
+                    <button class="btn btn-primary">Search</button>
+                    <button class="btn btn-primary">Save</button>
+                  </form>
+            </div>
+           
+        </div>
+
+        <div class="spinner-border text-primary" id="spinner" role="status">
+            <span class="sr-only"></span>
+        </div>
+        <div id="content"></div>
+
+    </div>
+    <script>
+      
+        $(document).ready(function () {
+            document.getElementById('spinner')
+                .style.display = 'none';
+            
+
+            function submitUrl(){
+                var title = $("#title").val()
+                var uriLink = $("#uriLink").val()
+                $("#content").html("");
+                document.getElementById('spinner')
+                    .style.display = 'block';
+                var id = $('#selecthere').val();
+
+                $.ajax({
+                    url: "http://172.25.0.203:5000/api/submit-link",
+                    type: "POST",
+                    data: {"url" : uriLink, "title": title},
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    success: (res) => {
+                        $("#content").html(res);
+                        console.log("res", res);
+
+                        document.getElementById('spinner')
+                            .style.display = 'none';
+                    },
+                    error: (res) => {
+                        $("#content").html("ERROR");
+
+                        document.getElementById('spinner')
+                            .style.display = 'none';
+                    }
+                });
+                
+            }    
+            $("#scr-form").on("submit", function(e){
+                e.preventDefault();
+                // alert("asdf")
+                submitUrl();
+            });
+        });
+
+
+    </script>
+</body>
+
+</html>
