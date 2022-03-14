@@ -1,9 +1,120 @@
 <div class="row">
-    <div class="col-6">
-        <iframe src="{{ data.url }}"></iframe>
-    </div>
-    <div class="col-6">
-        <div></div>
-        {{ data.raw_text }}
+    <div class="col">
+        <span>Does the content match the text?</span>
+        <button id="save-data" class="btn btn-outline-success btn-sm">Yes</button>
+        <button id="cancel-data" class="btn btn-outline-danger btn-sm">No</button>
     </div>
 </div>
+<div class="py-2"></div>
+<div class="row">
+    <div class="col-sm-12 col-md-6 ">
+        <span class="text-muted">Page might not load below, but you can save data.</span>
+        <iframe id="url-link-frame" src="" name="myFrame"></iframe>
+        <p><a id="au-click" class="d-none" href="{{ data.content }}" target="myFrame">Open TutorialRepublic.com</a></p>
+    </div>
+    <div class="col-sm-12 col-md-6 ">
+        
+        <span>-</span>
+        <div id="raw_text">
+            {{ data.raw_text }}</div>
+    </div>
+    <div class="d-none" id="hidden-html">{{ data.raw_data }}</div>
+    <div class="modal fade" id="modal1" tabindex="-1" aria-labelledby="modal1Label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modal1Label">Modal title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal1Body">
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+<script>
+    // $("#au-click").trigger("click");
+    var ip = ""
+    var settings = {
+        'cache': false,
+        'dataType': "jsonp",
+        "async": true,
+        "crossDomain": true,
+        "url": "http://jsonip.com",
+        "method": "GET",
+        "headers": {
+            "accept": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+    // get ip
+    $.ajax(settings).done(function (response) {
+        ip = response.ip;
+    });
+    var save = false;
+    document.getElementById('au-click').click();
+    var modalContainer = document.getElementById('modal1')
+        modalContainer.addEventListener('hidden.bs.modal', function (event) {
+            console.log(save);
+            if(save==true){
+                $("#content").html("")
+                $("#title").val("")
+                $("#uriLink").val("")
+            }
+            save=false;
+    })
+
+    $("#save-data").on('click', function (e) {
+        e.preventDefault();
+        var raw_text = $("#raw_text").text();
+        var raw_html = $("#hidden-html").text();
+       
+        $(".cus-toast").toast('show')
+        $.ajax({
+            url: "http://172.25.0.203:5000/api/save-data",
+            type: "POST",
+            data: {
+                "title": "{{data.title}}",
+                "ip": ip,
+                "link": "{{data.content}}",
+                "without_tag": raw_text,
+                "with_tag": raw_html,
+            },
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true,
+            success: (res) => {
+                if(res.success == true){
+                    $("#modal1Label").text("Success")
+                    save=true;
+                }else{
+                    $("#modal1Label").text("Failure")
+                }
+                $("#modal1Body").text(res.msg)
+                
+                $('#modal1').modal('show');
+                console.log(res);
+                // document.getElementById('spinner')
+                //     .style.display = 'none';
+            },
+            error: (res) => {
+                document.getElementById('spinner')
+                    .style.display = 'none';
+            }
+        });
+    });
+
+    $("#cancel-data").on('click', function (e) {
+        e.preventDefault();
+        // cancel here
+        $("#content").html("")
+        $("#title").val("")
+        $("#uriLink").val("")
+
+    });
+</script>

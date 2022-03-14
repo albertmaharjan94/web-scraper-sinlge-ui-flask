@@ -13,34 +13,41 @@
     <script src="/static/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <style>
+        #url-link-frame{
+            width: 100%;
+            height: 100%;
+        }
+    </style>
     <title>Document</title>
 </head>
 
 <body>
-    <div class="w-100 p-5">
+    <div class="w-100 px-5 py-3">
         <div class="row">
             <div class="col">
                 <h3>Webscraping Interface</h3>
                 <form id="scr-form">
                     <div class="form-group">
                       <!-- <label for="title">Title</label> -->
-                      <input type="text" class="form-control" id="title" aria-describedby="titleHelp" placeholder="Enter title">
+                      <input type="text" class="form-control" id="title" aria-describedby="titleHelp" placeholder="Enter title" required>
                       <small id="titleHelp" class="form-text text-muted">Please insert the title of the content.</small>
                     </div>
                     
                     <div class="form-group">
                         <!-- <label for="uriLink">Link</label> -->
-                        <input type="text" class="form-control" id="uriLink" aria-describedby="uriLinkHelp" placeholder="Enter link">
+                        <input type="text" class="form-control" id="uriLink" aria-describedby="uriLinkHelp" placeholder="Enter link" required>
                         <small id="uriLinkHelp" class="form-text text-muted">Please insert the link for the content.</small>
                       </div>
+                      <div class="py-2"></div>
                     
                     <button class="btn btn-primary">Search</button>
-                    <button class="btn btn-primary">Save</button>
                   </form>
             </div>
            
         </div>
 
+        <div class="my-2"></div>
         <div class="spinner-border text-primary" id="spinner" role="status">
             <span class="sr-only"></span>
         </div>
@@ -72,13 +79,11 @@
                     crossDomain: true,
                     success: (res) => {
                         $("#content").html(res);
-                        console.log("res", res);
-
                         document.getElementById('spinner')
                             .style.display = 'none';
                     },
                     error: (res) => {
-                        $("#content").html("ERROR");
+                        $("#content").html("Make sure you have correct url format");
 
                         document.getElementById('spinner')
                             .style.display = 'none';
@@ -91,6 +96,8 @@
                 // alert("asdf")
                 submitUrl();
             });
+
+          
         });
 
 
