@@ -8,10 +8,10 @@ import psycopg2
 app = Flask(__name__)
 
 conn = psycopg2.connect(
-        host="localhost",
+        host="45.115.217.102",
         database="scrap_db",
         user="postgres",
-        password="password")
+        password="postgres")
 
 
 @app.route("/")
